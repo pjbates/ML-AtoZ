@@ -6,13 +6,34 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Importing the dataset
-dataset = pd.read_csv('Data.csv')
+dataset = pd.read_csv('c:\src\ML-AtoZ\Part 1 - Data Preprocessing\Data.csv')
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, 3].values
 
-# Splitting the dataset into the Training set and Test set
-from sklearn.cross_validation import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+#Cleaning Data - Using the new functions. 
+from sklearn.impute import SimpleImputer
+imp_mean = SimpleImputer(missing_values = np.nan, strategy = 'mean')
+X[:, 1:3] = imp_mean.fit_transform(X[:, 1:3])
+
+#Encode Category Data
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+le_X = LabelEncoder()
+X[:, 0] = le_X.fit_transform(X[:, 0])
+ohe_X = OneHotEncoder(categorical_features = [0])
+X = ohe_X.fit_transform(X).toarray()
+
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer, make_column_transformer
+process = make_column_transformer(
+    (OneHotEncoder(), [0]),
+    remainder="passthrough"
+    )
+
+A = process.fit_transform(X)
+
+
+
+
 
 # Feature Scaling
 """from sklearn.preprocessing import StandardScaler
